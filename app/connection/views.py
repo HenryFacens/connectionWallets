@@ -1,5 +1,6 @@
 import json
 import requests
+import datetime
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -22,6 +23,11 @@ def request_message(request):
     data = json.loads(request.body)
     print(data)
 
+    current_time = datetime.datetime.now(datetime.timezone.utc)
+    expiration_time = current_time + datetime.timedelta(minutes=5)
+
+    expiration_time_iso = expiration_time.isoformat()
+
     REQUEST_URL = 'https://authapi.moralis.io/challenge/request/evm'
     request_object = {
       "domain": "defi.finance",
@@ -29,7 +35,7 @@ def request_message(request):
       "address": data['address'],
       "statement": "Please confirm",
       "uri": "https://defi.finance/",
-      "expirationTime": "2024-02-01T00:00:00.000Z",
+      "expirationTime": expiration_time_iso,
       "notBefore": "2020-01-01T00:00:00.000Z",
       "timeout": 15
     }
